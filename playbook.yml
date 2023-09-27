@@ -1,0 +1,53 @@
+---
+- name: Встановлення та налаштування Apache веб-сервера
+  hosts: web
+  become: yes
+  vars_files:
+    - secret.yml
+  
+  tasks:
+    - name: Встановити пакет Apache
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Запустити службу Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Копіювання файлу index.html на сервер
+      copy:
+        src: ~/.ansible/virtm/index.html
+        dest: /var/www/html/index.html
+
+    - name: Перевірка доступності веб-сторінки
+      uri:
+        url: http://localhost/index.html
+        status_code: 200
+      register: web_check
+
+    - name: Зберегти результати в файл
+      copy: 
+        content: "{{ web_check }}"
+        dest: "~/.ansible/virtm/result"
+      delegate_to: localhost
+      become: no
+
+
+
+#    - name: Зберегти результати в файл
+#      delegate_to: localhost
+#      copy:
+#        content: "{{ web_check }}"
+#        dest: "~/.ansible/virtm/result"
+
+
+#    - name: Зберегти результати в файл
+#      local_action: 
+#        module: copy
+#        content: "{{ web_check }}"
+#        dest: "~/result"
+

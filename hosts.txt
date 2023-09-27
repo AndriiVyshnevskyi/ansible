@@ -1,0 +1,7 @@
+[web]
+server1 ansible_host=192.168.0.130 ansible_user=root ansible_password="{{ server1_password }}"
+server2 ansible_host=192.168.0.125 ansible_user=root ansible_password="{{ server2_password }}"
+
+
+#192.168.0.125
+#192.168.0.130
